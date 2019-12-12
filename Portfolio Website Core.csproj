@@ -6,4 +6,10 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel> <!--added manual-->
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\images\" />
+    <Folder Include="wwwroot\javascript\" />
+  </ItemGroup>
+
 </Project>

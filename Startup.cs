@@ -26,6 +26,10 @@ namespace Portfolio_Website_Core
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseDefaultFiles();
+            //app.UseStaticFiles();
+            app.UseFileServer(); // combines both useDefault, UseStatic and UseDirectoryBrowser
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
