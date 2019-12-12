@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Portfolio_Website_Core</RootNamespace>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel> <!--added manual-->
+  </PropertyGroup>
+
+</Project>
