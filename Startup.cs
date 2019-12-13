@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Portfolio_Website_Core.Models;
 
 namespace Portfolio_Website_Core
 {
@@ -16,6 +18,12 @@ namespace Portfolio_Website_Core
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+         
+
+            Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
+            services.AddMvc(/*op => op.EnableEndpointRouting = false*/ optionSettings);
+           
+            services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -27,8 +35,11 @@ namespace Portfolio_Website_Core
             }
 
             //app.UseDefaultFiles();
-            //app.UseStaticFiles();
-            app.UseFileServer(); // combines both useDefault, UseStatic and UseDirectoryBrowser
+            app.UseStaticFiles();
+            //app.UseFileServer(); // combines both useDefault, UseStatic and UseDirectoryBrowser
+            app.UseCookiePolicy();
+            
+            app.UseMvcWithDefaultRoute();
 
             app.UseRouting();
 
