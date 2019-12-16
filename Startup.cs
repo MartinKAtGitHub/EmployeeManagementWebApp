@@ -38,8 +38,14 @@ namespace Portfolio_Website_Core
             app.UseStaticFiles();
             //app.UseFileServer(); // combines both useDefault, UseStatic and UseDirectoryBrowser
             app.UseCookiePolicy();
-            
-            app.UseMvcWithDefaultRoute();
+
+            //app.UseMvcWithDefaultRoute();
+           
+            app.UseMvc(routeBuilder => {
+                // same thing as the default setup above
+                routeBuilder.MapRoute("Default", "{controller=Home}/{Action=index}/{id?}");
+                
+            });
 
             app.UseRouting();
 

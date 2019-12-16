@@ -17,6 +17,17 @@ namespace Portfolio_Website_Core.Models
             _employeeList.Add(new Employee { Id = 3, Name = "Dike", Department = "PR", Email = "MAM@K.com" });
             _employeeList.Add(new Employee { Id = 4, Name = "Kike", Department = "CE", Email = "KEK@K.com" });
         }
+
+        public IEnumerable<Employee> GetAllEmployees()
+        {
+            return _employeeList;
+        }
+
+        public List<Employee> GetAllEmployeesList()
+        {
+            return _employeeList;
+        }
+
         public Employee GetEmployee(int id)
         {
             return _employeeList.FirstOrDefault( e => e.Id == id);

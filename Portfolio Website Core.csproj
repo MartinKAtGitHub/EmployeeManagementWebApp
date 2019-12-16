@@ -12,8 +12,4 @@
     <Folder Include="wwwroot\javascript\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\index.html" />
-  </ItemGroup>
-
 </Project>

@@ -8,5 +8,8 @@ namespace Portfolio_Website_Core.Models
    public interface IEmployeeRepository
     {
         Employee GetEmployee(int id);
+        IEnumerable<Employee> GetAllEmployees();
+        List<Employee> GetAllEmployeesList();
+
     }
 }

@@ -1,8 +1,20 @@
-﻿<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-    <h1>View from View/Home</h1>
-</body>
-</html>
+﻿@*@model Portfolio_Website_Core.Models.Employee*@
+@model HomeDetailsViewModel
+
+@{
+
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Employee Details";
+}
+
+@*<h1>@ViewBag.PageTitle</h1>*@
+<h1>@Model.PageTitle</h1>
+
+
+@*<div>@Model.Name</div>
+    <div>@Model.Email</div>
+    <div>@Model.Department</div>*@
+
+<div>@Model.Employee.Name</div>
+<div>@Model.Employee.Email</div>
+<div>@Model.Employee.Department</div>

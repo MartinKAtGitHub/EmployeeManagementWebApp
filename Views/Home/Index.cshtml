@@ -1,0 +1,36 @@
+﻿@model List<Employee>
+
+@{
+
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Employee List";
+}
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                DP
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var Employee in Model)
+        {
+            <tr>
+                <td>@Employee.Id</td>
+                <td>@Employee.Name</td>
+                <td>@Employee.Department</td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
