@@ -10,6 +10,6 @@ namespace Portfolio_Website_Core.Models
         Employee GetEmployee(int id);
         IEnumerable<Employee> GetAllEmployees();
         List<Employee> GetAllEmployeesList();
-
+        Employee AddEmployee(Employee employee);
     }
 }

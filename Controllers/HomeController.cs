@@ -40,5 +40,23 @@ namespace Portfolio_Website_Core.Controllers
             //ViewBag.PageTitle = "Employee Details";
             //return View(LOL);
         }
+        [HttpGet]
+        public ViewResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public RedirectToActionResult Create(Employee employee)
+        {
+            var newEmp = _employeeRepository.AddEmployee(employee);
+
+            var routeValue = new {
+                id = newEmp.Id,
+                CheckURL = "KEKW"
+            };
+
+            return RedirectToAction("details", routeValue);
+        }
     }
 }
