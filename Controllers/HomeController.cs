@@ -47,16 +47,20 @@ namespace Portfolio_Website_Core.Controllers
         }
 
         [HttpPost]
-        public RedirectToActionResult Create(Employee employee)
+        public IActionResult Create(Employee employee)
         {
-            var newEmp = _employeeRepository.AddEmployee(employee);
+            if(ModelState.IsValid) // Checks if all the required fields are valid
+            {
+                var newEmp = _employeeRepository.AddEmployee(employee);
+                var parameterData = new { 
+                    id = newEmp.Id,
+                    CheckURL = "KEKW"
+                };
 
-            var routeValue = new {
-                id = newEmp.Id,
-                CheckURL = "KEKW"
-            };
+                return RedirectToAction("details", parameterData);
+            }
 
-            return RedirectToAction("details", routeValue);
+            return View();
         }
     }
 }
