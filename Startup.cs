@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Portfolio_Website_Core.Models;
@@ -14,11 +16,22 @@ namespace Portfolio_Website_Core
 {
     public class Startup
     {
+
+        private IConfiguration _config; // can access Appsettings from this
+        public Startup(IConfiguration config)
+        {
+            _config = config;
+        }
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-         
+            services.AddDbContextPool<AppDdContex>(
+                options => 
+                {
+                    options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection"));
+                });
 
             Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
             services.AddMvc(/*op => op.EnableEndpointRouting = false*/ optionSettings);
