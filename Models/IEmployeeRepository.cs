@@ -11,5 +11,7 @@ namespace Portfolio_Website_Core.Models
         IEnumerable<Employee> GetAllEmployees();
         List<Employee> GetAllEmployeesList();
         Employee AddEmployee(Employee employee);
+        Employee Update(Employee employeeChanges);
+        Employee Delete(int id);
     }
 }
