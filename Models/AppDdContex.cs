@@ -13,10 +13,13 @@ namespace Portfolio_Website_Core.Models
         public DbSet<Employee> Employees { get; set; }
 
 
-        public AppDdContex( DbContextOptions<AppDdContex> options) : base(options)
+        public AppDdContex(DbContextOptions<AppDdContex> options) : base(options)
         {
 
         }
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+        }
     }
 }
