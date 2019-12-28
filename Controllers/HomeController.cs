@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
 using Portfolio_Website_Core.ViewModels;
 using System;
@@ -14,11 +15,13 @@ namespace Portfolio_Website_Core.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository; // Read only. because we don't want to change the data in here
         private readonly IWebHostEnvironment hostingEnvironment;
+        private readonly ILogger logger;
 
-        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment hostingEnvironment)
+        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment hostingEnvironment, ILogger<HomeController> logger)
         {
             _employeeRepository = employeeRepository;
             this.hostingEnvironment = hostingEnvironment;
+            this.logger = logger;
         }
 
         // Action methods need to have view(razor page) with a similar page. 
@@ -32,6 +35,12 @@ namespace Portfolio_Website_Core.Controllers
 
         public ViewResult Details(int? id) // This is an Action method. and it handles what happens with the incoming https request
         {
+            //  throw new Exception("Creating an Exception");
+            logger.LogTrace("LEVEL 0");
+            logger.LogInformation("LEVEL INFO");
+            logger.LogCritical("LEVEL CRIT");
+            logger.LogDebug("LEVLE DEBUG");
+
 
             var emp = _employeeRepository.GetEmployee(id.Value);
             if(emp == null)

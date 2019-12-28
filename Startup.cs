@@ -49,7 +49,12 @@ namespace Portfolio_Website_Core
             }
             else
             {
-                app.UseStatusCodePagesWithRedirects("/Error/{0}");
+
+                // Uses the ErrorController 
+                //60
+                app.UseExceptionHandler("/Error");
+                //59
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
             //app.UseDefaultFiles();
