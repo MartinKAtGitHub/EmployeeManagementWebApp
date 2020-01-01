@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,11 +28,14 @@ namespace Portfolio_Website_Core
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextPool<AppDdContex>(
+            services.AddDbContextPool<AppDdContext>(
                 options => 
                 {
                     options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection"));
                 });
+
+            //65
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDdContext>();
 
             Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
             services.AddMvc(/*op => op.EnableEndpointRouting = false*/ optionSettings);
@@ -57,8 +61,11 @@ namespace Portfolio_Website_Core
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
+
             //app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseAuthentication();
+
             //app.UseFileServer(); // combines both useDefault, UseStatic and UseDirectoryBrowser
             app.UseCookiePolicy();
 

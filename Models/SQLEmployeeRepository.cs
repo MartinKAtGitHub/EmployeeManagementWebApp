@@ -7,9 +7,9 @@ namespace Portfolio_Website_Core.Models
 {
     public class SQLEmployeeRepository : IEmployeeRepository
     {
-        private readonly AppDdContex context;
+        private readonly AppDdContext context;
 
-        public SQLEmployeeRepository(AppDdContex contex)
+        public SQLEmployeeRepository(AppDdContext contex)
         {
             this.context = contex;
         }

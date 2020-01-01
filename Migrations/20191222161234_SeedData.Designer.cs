@@ -8,7 +8,7 @@ using Portfolio_Website_Core.Models;
 
 namespace Portfolio_Website_Core.Migrations
 {
-    [DbContext(typeof(AppDdContex))]
+    [DbContext(typeof(AppDdContext))]
     [Migration("20191222161234_SeedData")]
     partial class SeedData
     {
