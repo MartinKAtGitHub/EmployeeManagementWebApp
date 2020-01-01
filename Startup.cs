@@ -35,7 +35,23 @@ namespace Portfolio_Website_Core
                 });
 
             //65
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDdContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                //68
+                options.Password.RequiredLength = 5;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = true;
+
+            }).AddEntityFrameworkStores<AppDdContext>();
+            // 68 -- we can make it its own thing if you want to change the options of diffrent things but since we we only are op Password setting we can do it above 
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.Password.RequiredLength = 5;
+            //    options.Password.RequiredUniqueChars = 0;
+            //});
 
             Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
             services.AddMvc(/*op => op.EnableEndpointRouting = false*/ optionSettings);
