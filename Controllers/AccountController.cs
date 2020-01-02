@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio_Website_Core.ViewModels;
@@ -30,14 +31,32 @@ namespace Portfolio_Website_Core.Controllers
             return RedirectToAction("index", "home");
         }
 
+       [HttpGet][HttpPost] /*[AcceptVerbs("Get","Post")] //Dose the same just less code */
+       [AllowAnonymous]
+        public async Task<IActionResult> IsEmailInUse(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if(user == null)
+            {
+                return Json(true); // Jquery validation uses Json for ajax stuff.
+            }
+            else
+            {
+                return Json($"Email {email} is already in use"); // Jquery validation uses Json for ajax stuff.
+            }
+        }
+      
+
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
 
@@ -65,13 +84,15 @@ namespace Portfolio_Website_Core.Controllers
 
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (ModelState.IsValid)
             {
@@ -81,7 +102,17 @@ namespace Portfolio_Website_Core.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("index", "home");
+                    if(!string.IsNullOrEmpty(returnUrl) /*&& Url.IsLocalUrl(returnUrl) in case you want to display a Warning/error messages warning the user they are going outside of ouer website*/)
+                    {
+                        //return Redirect(returnUrl);
+                        return LocalRedirect(returnUrl); // 73 LocalRedirect is very important. or you could be passed to a malicious website
+                    }
+                    else
+                    {
+                        // maybe display a warning before sending user to anoter websire in case not using url.islocal
+                        return RedirectToAction("index", "home");
+                    }
+
                 }
                 
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");

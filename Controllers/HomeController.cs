@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace Portfolio_Website_Core.Controllers
 {
+    //[Authorize] Can be used on the whole controller
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository; // Read only. because we don't want to change the data in here
@@ -25,7 +27,7 @@ namespace Portfolio_Website_Core.Controllers
         }
 
         // Action methods need to have view(razor page) with a similar page. 
-
+        [AllowAnonymous]
         public ViewResult Index() // This is an Action method. and it handles what happens with the incoming https request
         {
             var model = _employeeRepository.GetAllEmployeesList();
@@ -62,12 +64,14 @@ namespace Portfolio_Website_Core.Controllers
             //return View(LOL);
         }
         [HttpGet]
+        [Authorize]
         public ViewResult Create()
         {
             return View();
         }
 
         [HttpGet]
+        [Authorize]
         public ViewResult Edit(int Id)
         {
             var emp = _employeeRepository.GetEmployee(Id);
@@ -84,6 +88,7 @@ namespace Portfolio_Website_Core.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(EmployeeEditViewModel model)
         {
             if (ModelState.IsValid) // Checks if all the required fields are valid
