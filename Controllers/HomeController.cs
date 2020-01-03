@@ -174,5 +174,11 @@ namespace Portfolio_Website_Core.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            _employeeRepository.Delete(id);
+            return RedirectToAction("index");
+        }
     }
 }

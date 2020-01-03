@@ -30,7 +30,6 @@ namespace Portfolio_Website_Core.Models
                 dbContext.SaveChanges();
             }
             return employee;
-
         }
 
         public IEnumerable<Employee> GetAllEmployees()
