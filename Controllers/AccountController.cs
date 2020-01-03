@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Portfolio_Website_Core.ViewModels;
+using Portfolio_Website_Core.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,11 +14,11 @@ namespace Portfolio_Website_Core.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public AccountController(UserManager<IdentityUser> userManager,
-                                SignInManager<IdentityUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager,
+                                SignInManager<ApplicationUser> signInManager)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
@@ -62,10 +63,11 @@ namespace Portfolio_Website_Core.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser
+                var user = new ApplicationUser
                 {
                     UserName = model.Email,
-                    Email = model.Email
+                    Email = model.Email,
+                    City = model.City
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
 
@@ -74,6 +76,7 @@ namespace Portfolio_Website_Core.Controllers
                   await signInManager.SignInAsync(user, isPersistent:false);
                     return RedirectToAction("index","home");
                 }
+
                 foreach (var error in result.Errors) // This will be added to the asp-validation-summary
                 {
                     ModelState.AddModelError("", error.Description);

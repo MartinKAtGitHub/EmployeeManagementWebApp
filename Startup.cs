@@ -37,7 +37,7 @@ namespace Portfolio_Website_Core
                 });
 
             //65
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 //68
                 options.Password.RequiredLength = 5;

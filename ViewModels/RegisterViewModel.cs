@@ -19,6 +19,9 @@ namespace Portfolio_Website_Core.ViewModels
             ErrorMessage = "The Email domain must be gmail.com")]
         public string CustomEmail { get; set; } // Special Email that only takes a certain domaine name
 
+
+        public string City { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
