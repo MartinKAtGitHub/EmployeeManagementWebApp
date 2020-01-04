@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
@@ -10,6 +11,14 @@ using System.Threading.Tasks;
 
 namespace Portfolio_Website_Core.Controllers
 {
+    //82
+    [Authorize(Roles ="Admin")]
+    // [Authorize(Roles ="Admin, User")] Can be 1 of them
+    /*
+     * Need to be both
+    [Authorize(Roles ="Admin")] 
+    [Authorize(Roles ="User")] 
+     */
     // 78
     public class AdministrationController : Controller
     {
