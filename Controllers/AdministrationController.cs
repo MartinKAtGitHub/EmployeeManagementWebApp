@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Portfolio_Website_Core.Controllers
 {
     //82
-    [Authorize(Roles ="Admin")]
+    [Authorize(Roles = "Admin")]
     // [Authorize(Roles ="Admin, User")] Can be 1 of them
     /*
      * Need to be both
@@ -31,6 +31,14 @@ namespace Portfolio_Website_Core.Controllers
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.logger = logger;
+        }
+
+        [HttpGet]
+        public IActionResult ListUsers()
+        {
+            var allUsers = userManager.Users;
+
+            return View(allUsers);
         }
 
         [HttpGet]
@@ -110,9 +118,9 @@ namespace Portfolio_Website_Core.Controllers
             else
             {
                 role.Name = model.RoleName;
-               var result = await roleManager.UpdateAsync(role); // Remember to update the DB using this
+                var result = await roleManager.UpdateAsync(role); // Remember to update the DB using this
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
                     return RedirectToAction("ListRoles");
                 }
@@ -131,8 +139,8 @@ namespace Portfolio_Website_Core.Controllers
             ViewBag.roleId = roleId;
 
             var role = await roleManager.FindByIdAsync(roleId);
-            
-            if(role == null)
+
+            if (role == null)
             {
                 ViewBag.ErrorMessage = $"Role with Id = {roleId} cannot be found";
                 return View("NotFound");
@@ -148,7 +156,7 @@ namespace Portfolio_Website_Core.Controllers
                     UserName = user.UserName
                 };
 
-                if(await userManager.IsInRoleAsync(user, role.Name))
+                if (await userManager.IsInRoleAsync(user, role.Name))
                 {
                     userRoleViewModel.IsSelected = true;
                 }
@@ -166,8 +174,8 @@ namespace Portfolio_Website_Core.Controllers
         public async Task<IActionResult> EditUsersInRole(List<UserRoleViewModel> model, string roleId)
         {
             var role = await roleManager.FindByIdAsync(roleId);
-            
-            if(role == null)
+
+            if (role == null)
             {
                 ViewBag.ErrorMessage = $"Role with Id {roleId} cannot be found";
                 return View("NotFound");
@@ -176,14 +184,14 @@ namespace Portfolio_Website_Core.Controllers
             for (int i = 0; i < model.Count; i++)
             {
                 var user = await userManager.FindByIdAsync(model[i].UserId);
-                
+
                 IdentityResult result = null;
-               
-                if(model[i].IsSelected && !await userManager.IsInRoleAsync(user, role.Name))
+
+                if (model[i].IsSelected && !await userManager.IsInRoleAsync(user, role.Name))
                 {
-                   result = await userManager.AddToRoleAsync(user, role.Name);
+                    result = await userManager.AddToRoleAsync(user, role.Name);
                 }
-                else if(!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
+                else if (!model[i].IsSelected && await userManager.IsInRoleAsync(user, role.Name))
                 {
                     result = await userManager.RemoveFromRoleAsync(user, role.Name);
                 }
@@ -191,23 +199,23 @@ namespace Portfolio_Website_Core.Controllers
                 {
                     // Case.1 User is not selected and Not in this role = dont do anything (go next)
                     // case.2 User is SELECTED but IS IN role = dont do anything(go next)
-                    continue; 
+                    continue;
                 }
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
-                    if(i < (model.Count - 1))
+                    if (i < (model.Count - 1))
                     {
                         continue;
                     }
                     else
                     {
-                        return RedirectToAction("EditRole", new { Id = roleId});
+                        return RedirectToAction("EditRole", new { Id = roleId });
                     }
                 }
 
             }
-                return RedirectToAction("EditRole", new { Id = roleId });
+            return RedirectToAction("EditRole", new { Id = roleId });
 
         }
 

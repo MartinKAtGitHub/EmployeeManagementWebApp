@@ -32,12 +32,13 @@ namespace Portfolio_Website_Core.Controllers
             return RedirectToAction("index", "home");
         }
 
-       [HttpGet][HttpPost] /*[AcceptVerbs("Get","Post")] //Dose the same just less code */
-       [AllowAnonymous]
+        [HttpGet]
+        [HttpPost] /*[AcceptVerbs("Get","Post")] //Dose the same just less code */
+        [AllowAnonymous]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            if(user == null)
+            if (user == null)
             {
                 return Json(true); // Jquery validation uses Json for ajax stuff.
             }
@@ -46,7 +47,7 @@ namespace Portfolio_Website_Core.Controllers
                 return Json($"Email {email} is already in use"); // Jquery validation uses Json for ajax stuff.
             }
         }
-      
+
 
 
         [HttpGet]
@@ -71,10 +72,15 @@ namespace Portfolio_Website_Core.Controllers
                 };
                 var result = await userManager.CreateAsync(user, model.Password);
 
-                if(result.Succeeded)
+                if (result.Succeeded)
                 {
-                  await signInManager.SignInAsync(user, isPersistent:false);
-                    return RedirectToAction("index","home");
+
+                    if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("ListUsers", "Administration");
+                    }
+                    await signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("index", "home");
                 }
 
                 foreach (var error in result.Errors) // This will be added to the asp-validation-summary
@@ -101,11 +107,11 @@ namespace Portfolio_Website_Core.Controllers
             {
 
                 var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe,
-                                                                    lockoutOnFailure:false);
+                                                                    lockoutOnFailure: false);
 
                 if (result.Succeeded)
                 {
-                    if(!string.IsNullOrEmpty(returnUrl) /*&& Url.IsLocalUrl(returnUrl) in case you want to display a Warning/error messages warning the user they are going outside of ouer website*/)
+                    if (!string.IsNullOrEmpty(returnUrl) /*&& Url.IsLocalUrl(returnUrl) in case you want to display a Warning/error messages warning the user they are going outside of ouer website*/)
                     {
                         //return Redirect(returnUrl);
                         return LocalRedirect(returnUrl); // 73 LocalRedirect is very important. or you could be passed to a malicious website
@@ -117,7 +123,7 @@ namespace Portfolio_Website_Core.Controllers
                     }
 
                 }
-                
+
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
             }
             return View(model);
