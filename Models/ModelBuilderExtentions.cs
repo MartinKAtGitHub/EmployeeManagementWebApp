@@ -8,9 +8,14 @@ namespace Portfolio_Website_Core.Models
 {
     public static class ModelBuilderExtentions
     {
+        /// <summary>
+        /// Hard coded values which we want to add to the Database
+        /// ! ! ! Remember to Migrate this seed data also ! ! !
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         public static void Seed(this ModelBuilder modelBuilder)
         {
-            //Remember to Migrate this seed data also
+          
             modelBuilder.Entity<Employee>().HasData(
                 new Employee
                 {

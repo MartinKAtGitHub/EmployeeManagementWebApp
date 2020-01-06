@@ -103,7 +103,7 @@ namespace Portfolio_Website_Core.Controllers
                 return View(model);
             }
         }
-
+        //86
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
         {
@@ -166,6 +166,8 @@ namespace Portfolio_Website_Core.Controllers
             return View(roles);
         }
 
+
+
         // 80
         [HttpGet]
         public async Task<IActionResult> EditRole(string id)
@@ -220,6 +222,33 @@ namespace Portfolio_Website_Core.Controllers
             }
 
         }
+
+        //88
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            var role = await roleManager.FindByIdAsync(id);
+
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"Role with Id = {id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                var result = await roleManager.DeleteAsync(role);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("ListRoles");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+                return View("ListRoles");
+            }
+        }
+
         //81
         [HttpGet]
         public async Task<IActionResult> EditUsersInRole(string roleId)
@@ -306,6 +335,8 @@ namespace Portfolio_Website_Core.Controllers
             return RedirectToAction("EditRole", new { Id = roleId });
 
         }
+
+
 
 
     }
