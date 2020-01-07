@@ -15,7 +15,7 @@ namespace Portfolio_Website_Core.ViewModels
         public string Id { get; set; }
         
         [Required(ErrorMessage ="Role name is required")]
-       
+        [Display(Name ="Role name")]
         public string RoleName { get; set; }
 
         public List<String> Users { get; set; }
