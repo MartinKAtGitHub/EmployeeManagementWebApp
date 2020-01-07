@@ -55,8 +55,8 @@ namespace Portfolio_Website_Core.Controllers
 
             logger.LogError($"The path {exeptionDetailes.Path} threw an exception {exeptionDetailes.Error} ");
 
-            ViewBag.ExceptionPath = "This is an Example =" + exeptionDetailes.Path;
-            ViewBag.ExceptionMessage =  "This is an Example =" + exeptionDetailes.Error.Message;
+            ViewBag.ExceptionPath = "Path = " + exeptionDetailes.Path;
+            ViewBag.ExceptionMessage =  "Error Message = " + exeptionDetailes.Error.Message;
             //ViewBag.Stacktrace = exeptionDetailes.Error.StackTrace;
             return View("Error");
         }

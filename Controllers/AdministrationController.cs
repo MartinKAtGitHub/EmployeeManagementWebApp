@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
 using Portfolio_Website_Core.ViewModels;
@@ -227,6 +228,8 @@ namespace Portfolio_Website_Core.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteRole(string id)
         {
+
+            
             var role = await roleManager.FindByIdAsync(id);
 
             if (role == null)
@@ -236,16 +239,30 @@ namespace Portfolio_Website_Core.Controllers
             }
             else
             {
-                var result = await roleManager.DeleteAsync(role);
-                if (result.Succeeded)
+                // 90
+                try
                 {
-                    return RedirectToAction("ListRoles");
+                    var result = await roleManager.DeleteAsync(role);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ListRoles");
+                    }
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                    return View("ListRoles");
                 }
-                foreach (var error in result.Errors)
+                catch (DbUpdateException ex) // We want this catch to only deal with DbUpdateException and not generic exceptions
                 {
-                    ModelState.AddModelError("", error.Description);
+
+                    logger.LogError($"Error deleting role {ex}");
+
+                    ViewBag.ErrorTitle = $"{role.Name} Role is in use";
+                    ViewBag.ErrorMessage = $"{role.Name} Role cant be deleted as there are users " +
+                        $"in this role Please remove the users from this role before deleting the role";
+                    return View("Error");
                 }
-                return View("ListRoles");
             }
         }
 

@@ -27,10 +27,10 @@ namespace Portfolio_Website_Core.Models
 
             // 89 What mode do we set our db ti in case of foreign keys(default is cascading(eks If a role is deleted, UserRoles table will remove the connection to the users in there) )
             // Remember to migrate to apply new setting
-            //foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-            //{
-            //    foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
-            //}
+            foreach (var foreignKey in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            {
+                foreignKey.DeleteBehavior = DeleteBehavior.Restrict;
+            }
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Portfolio_Website_Core.ViewModels
         [Remote(action: "IsEmailInUse", controller: "Account")] // 75 Remote validation used to check in Email is in use
         public string Email{ get; set; }
 
-        [CustomValidEmail(allowedDomain: "gmail.com",
-            ErrorMessage = "The Email domain must be gmail.com")]
-        public string CustomEmail { get; set; } // Special Email that only takes a certain domaine name
+        //[CustomValidEmail(allowedDomain: "gmail.com",
+        //    ErrorMessage = "The Email domain must be gmail.com")]
+        //public string CustomEmail { get; set; } // Special Email that only takes a certain domaine name
 
 
         public string City { get; set; }

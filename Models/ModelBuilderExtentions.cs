@@ -19,14 +19,14 @@ namespace Portfolio_Website_Core.Models
             modelBuilder.Entity<Employee>().HasData(
                 new Employee
                 {
-                    Id = 1,
+                    Id = 8888,
                     Name = "SeedData = BROKE",
                     Email = "SeedMail@LOL.com",
                     Department = Dept.Payroll
                 },
                 new Employee
                 {
-                    Id = 2,
+                    Id = 9999,
                     Name = "SeedData = BACK",
                     Email = "SeedMail@LOL.com",
                     Department = Dept.Payroll
