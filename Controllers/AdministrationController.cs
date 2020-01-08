@@ -388,6 +388,8 @@ namespace Portfolio_Website_Core.Controllers
 
         //88
         [HttpPost]
+        //94
+        [Authorize(Policy = "DeleteRolePolicy")]
         public async Task<IActionResult> DeleteRole(string id)
         {
             var role = await roleManager.FindByIdAsync(id);

@@ -25,13 +25,13 @@ namespace Portfolio_Website_Core
         {
             _config = config;
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<AppDdContext>(
-                options => 
+                options =>
                 {
                     options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection"));
                 });
@@ -55,22 +55,29 @@ namespace Portfolio_Website_Core
             //    options.Password.RequiredUniqueChars = 0;
             //});
 
-           // Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
-            services.AddMvc(options => {
+            // Action<MvcOptions> optionSettings = op => op.EnableEndpointRouting = false;
+            services.AddMvc(options =>
+            {
                 //71 Sets the whole site. only for Authorized users only
                 var policy = new AuthorizationPolicyBuilder()
                                 .RequireAuthenticatedUser()
                                 .Build();
-                            
+
 
                 options.EnableEndpointRouting = false;
                 options.Filters.Add(new AuthorizeFilter(policy));
-                });
+            });
 
+            // 94
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("DeleteRolePolicy",
+                    policy => policy.RequireClaim("Delete Role").RequireClaim("Create Role")); //User needs both these claims to be able to use the DeleteRole policy
+            });
 
             //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class
-        
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,11 +106,12 @@ namespace Portfolio_Website_Core
             app.UseCookiePolicy();
 
             //app.UseMvcWithDefaultRoute();
-           
-            app.UseMvc(routeBuilder => {
+
+            app.UseMvc(routeBuilder =>
+            {
                 // same thing as the default setup above
                 routeBuilder.MapRoute("Default", "{controller=Home}/{Action=index}/{id?}");
-                
+
             });
 
             app.UseRouting();
