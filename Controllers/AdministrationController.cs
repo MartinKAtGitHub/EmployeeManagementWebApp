@@ -8,6 +8,7 @@ using Portfolio_Website_Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Portfolio_Website_Core.Controllers
@@ -33,6 +34,95 @@ namespace Portfolio_Website_Core.Controllers
             this.userManager = userManager;
             this.logger = logger;
         }
+
+        //93
+        [HttpGet]
+        public async Task<IActionResult> ManageUserClaims(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {userId} cannot be found";
+                return View("NotFound");
+            }
+
+            var existingUserClaims = await userManager.GetClaimsAsync(user);
+
+            var model = new UserClaimsViewModel
+            {
+                UserId = userId
+            };
+
+            // Loop through each claim we have in our application
+            foreach (Claim claim in ClaimsStore.AllClaims)
+            {
+                UserClaim userClaim = new UserClaim
+                {
+                    ClaimType = claim.Type
+                };
+
+                //for (int i = 0; i < existingUserClaims.Count; i++)
+                //{
+                //    if (existingUserClaims[i].Type == claim.Type)
+                //    {
+                //        userClaim.IsSelected = true;
+                //        break;
+                //    }
+                //}
+
+
+                // If the user has the claim, set IsSelected property to true, so the checkbox
+                // next to the claim is checked on the UI
+                if (existingUserClaims.Any(c => c.Type == claim.Type))
+                {
+                    userClaim.IsSelected = true;
+                }
+
+                model.Cliams.Add(userClaim);
+            }
+
+            return View(model);
+
+        }
+
+        //93
+        [HttpPost]
+        public async Task<IActionResult> ManageUserClaims(UserClaimsViewModel model)
+        {
+            var user = await userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User with Id = {model.UserId} cannot be found";
+                return View("NotFound");
+            }
+
+            // Get all the user existing claims and delete them
+            var claims = await userManager.GetClaimsAsync(user);
+            // We delete all the Claims to avoid using alot of ifs, this way we don't have to check witch once are newly or removed marked roles. we just add all the marked once at the end 
+            var result = await userManager.RemoveClaimsAsync(user, claims);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot remove user existing claims");
+                return View(model);
+            }
+
+            // Add all the claims that are selected on the UI
+            result = await userManager.AddClaimsAsync(user,
+                model.Cliams.Where(c => c.IsSelected).Select(c => new Claim(c.ClaimType, c.ClaimType)));
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Cannot add selected claims to user");
+                return View(model);
+            }
+
+            return RedirectToAction("EditUser", new { Id = model.UserId });
+
+        }
+
 
         // 84
         [HttpGet]
@@ -109,6 +199,7 @@ namespace Portfolio_Website_Core.Controllers
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string userId)
         {
+            // This could be in the class. but since 1 user can have many roles you would be duplicating the same ID for for the viewmodel 
             ViewBag.userId = userId;
 
             var user = await userManager.FindByIdAsync(userId);
