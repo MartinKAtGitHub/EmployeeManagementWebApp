@@ -72,7 +72,20 @@ namespace Portfolio_Website_Core
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("DeleteRolePolicy",
-                    policy => policy.RequireClaim("Delete Role").RequireClaim("Create Role")); //User needs both these claims to be able to use the DeleteRole policy
+                    policy => policy.RequireClaim("Delete Role", "true")); //User needs both these claims to be able to use the DeleteRole policy
+            });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("EditRolePolicy",
+                    policy => policy.RequireClaim("Edit Role", "true")); //User needs both these claims to be able to use the DeleteRole policy
+            });
+
+            //95
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminRolePolicy",
+                    policy => policy.RequireRole("Admin"));//  policy.RequireRole("Admin, Test Role") // If you need more roles in 1 policy
             });
 
             //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class

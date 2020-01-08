@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<IdentityRole>
 
+
 @{
     ViewBag.Title = "List of all roles";
 }
@@ -23,7 +24,19 @@
                 </div>
                 <div class="card-footer">
                     <form asp-action="DeleteRole" asp-route-id="@role.Id" method="post">
-                        <a asp-controller="Administration" asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-primary">Edit</a>
+
+                        @if ((await authorizationService.AuthorizeAsync(User, "EditRolePolicy")).Succeeded)
+                        {
+                            <a asp-controller="Administration" asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-primary">Edit</a>
+                        }
+
+                        @if ((await authorizationService.AuthorizeAsync(User, "DeleteRolePolicy")).Succeeded)
+                        {
+                            <span id="deleteSpan_@role.Id">
+                                <span class="btn btn-danger"
+                                      onclick="confirmDelete('@role.Id', true)">Delete</span>
+                            </span>
+                        }
 
                         <span id="confirmDeleteSpan_@role.Id" style="display:none">
                             <span>Are you sure you want to delete?</span>
@@ -32,10 +45,6 @@
                                   onclick="confirmDelete('@role.Id', false)">No</span>
                         </span>
 
-                        <span id="deleteSpan_@role.Id">
-                            <span class="btn btn-danger"
-                                  onclick="confirmDelete('@role.Id', true)">Delete</span>
-                        </span>
                     </form>
                 </div>
             </div>
