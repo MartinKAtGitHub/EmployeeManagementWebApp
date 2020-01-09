@@ -23,19 +23,22 @@ namespace Portfolio_Website_Core.Controllers
      */
 
     //95
-    [Authorize(Policy = "AdminRolePolicy")] // Since roles are just a claim with type Role we can use policies with Roles as well 
+    // [Authorize(Policy = "AdminRolePolicy")] // Since roles are just a claim with type Role we can use policies with Roles as well 
     // 78
     public class AdministrationController : Controller
     {
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ILogger<AdministrationController> logger;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, ILogger<AdministrationController> logger)
+        public AdministrationController(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager, 
+            ILogger<AdministrationController> logger, SignInManager<ApplicationUser> signInManager)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.logger = logger;
+            this.signInManager = signInManager;
         }
 
         //93
@@ -186,6 +189,8 @@ namespace Portfolio_Website_Core.Controllers
 
                 if (result.Succeeded)
                 {
+                    // To make sure the claims takes effect we need to sign the user out and back in(Claims only takes after Reloginn)
+                    await signInManager.RefreshSignInAsync(user); // Problem -> this will happen to your user even if you edit other users witch is not optimal
                     return RedirectToAction("ListUsers");
                 }
 
@@ -198,6 +203,8 @@ namespace Portfolio_Website_Core.Controllers
             }
         }
 
+
+        [Authorize(Policy = "Custom_EditRolePolicy")]
         // 91
         [HttpGet]
         public async Task<IActionResult> ManageUserRoles(string userId)
@@ -239,6 +246,8 @@ namespace Portfolio_Website_Core.Controllers
 
         }
 
+        
+        [Authorize(Policy = "Custom_EditRolePolicy")]
         //91
         [HttpPost]
         public async Task<IActionResult> ManageUserRoles(List<UserRolesViewModel> model, string userId)
@@ -337,7 +346,7 @@ namespace Portfolio_Website_Core.Controllers
         // 80
         [HttpGet]
         //96
-        [Authorize(Policy = "EditRolePolicy")]
+         [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(string id)
         {
             var role = await roleManager.FindByIdAsync(id);
@@ -366,7 +375,7 @@ namespace Portfolio_Website_Core.Controllers
         //80
         [HttpPost]
         //96
-        [Authorize(Policy = "EditRolePolicy")]
+         [Authorize(Policy = "EditRolePolicy")]
         public async Task<IActionResult> EditRole(EditRoleViewModel model)
         {
             var role = await roleManager.FindByIdAsync(model.Id);

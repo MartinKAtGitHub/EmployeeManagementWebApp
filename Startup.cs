@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Portfolio_Website_Core.Models;
+using Portfolio_Website_Core.Security;
 
 namespace Portfolio_Website_Core
 {
@@ -75,10 +76,29 @@ namespace Portfolio_Website_Core
                     policy => policy.RequireClaim("Delete Role", "true")); //User needs both these claims to be able to use the DeleteRole policy
             });
 
+            // 98 Claim can have 1 of these values to be true. country can have USA, UK or CANADA
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AllowedCountries", // "
+            //        policy => policy.RequireClaim("Country", "USA","UK","Canada")); //User needs both these claims to be able to use the DeleteRole policy
+            //});
+
+            //99 // If you ever want to set up a custom policy where 1 OR many conditions need to be met
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("EditRolePolicy",
-                    policy => policy.RequireClaim("Edit Role", "true")); //User needs both these claims to be able to use the DeleteRole policy
+                    policy => policy.RequireAssertion(context =>
+                        context.User.IsInRole("Admin") &&
+                        context.User.HasClaim(claim => claim.Type == "Edit Role" && claim.Value == "true") ||
+                        context.User.IsInRole("Super Admin")
+                    ));
+            });
+
+            // 101 Custom logic for authorization, not just basic role/claims 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Custom_EditRolePolicy",
+                    policy => policy.AddRequirements(new ManageAdminRolesAndClaimsRequirement()));
             });
 
             //95
@@ -90,7 +110,9 @@ namespace Portfolio_Website_Core
 
             //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>(); // <- dependency injection. If a class is using the IEmployeeRepository create a instance of MockEmployeeRepository and inject it to the class
-
+           
+            services.AddSingleton<IAuthorizationHandler, CanEditOnluOtherAdminRolesAndClaimsHandler>();
+            services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
