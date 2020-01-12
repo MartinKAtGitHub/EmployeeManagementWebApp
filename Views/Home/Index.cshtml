@@ -18,11 +18,13 @@
             <img class="card-img-top" src="@PhotoPath" asp-append-version="true"/>
             <div class="card-footer text-center">
                 @*<a href="#" class="btn btn-primary">View</a>*@
-                <a asp-controller="Home" asp-action="details" asp-route-id="@employee.Id"
+                <a asp-controller="Home" asp-action="details" asp-route-id="@employee.EncryptedId"
                    class="btn btn-primary m-1">View</a>
 
-                <a asp-controller="Home" asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-primary m-1">Edit</a>
-                <a asp-controller="Home" asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-danger">Delete</a>
+                <a asp-controller="Home" asp-action="Edit" asp-route-id="@employee.EncryptedId" 
+                   class="btn btn-primary m-1">Edit</a>
+                <a asp-controller="Home" asp-action="Delete" asp-route-id="@employee.EncryptedId" 
+                   class="btn btn-danger">Delete</a>
 
             </div>
         </div>

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
+using Portfolio_Website_Core.Security;
 using Portfolio_Website_Core.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -18,37 +20,56 @@ namespace Portfolio_Website_Core.Controllers
         private readonly IEmployeeRepository _employeeRepository; // Read only. because we don't want to change the data in here
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly ILogger logger;
+        
+        private readonly IDataProtector protector;
 
-        public HomeController(IEmployeeRepository employeeRepository, IWebHostEnvironment hostingEnvironment, ILogger<HomeController> logger)
+        public HomeController(IEmployeeRepository employeeRepository,
+            IWebHostEnvironment hostingEnvironment,
+            ILogger<HomeController> logger,
+            IDataProtectionProvider dataProtectionProvider,
+            DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             _employeeRepository = employeeRepository;
             this.hostingEnvironment = hostingEnvironment;
             this.logger = logger;
+
+            //120
+            protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.EmployeeIdRouteValue);
         }
 
         // Action methods need to have view(razor page) with a similar page. 
         [AllowAnonymous]
         public ViewResult Index() // This is an Action method. and it handles what happens with the incoming https request
         {
-            var model = _employeeRepository.GetAllEmployeesList();
+            var model = _employeeRepository.GetAllEmployeesList()
+
+                 .Select(e =>
+                 {
+                     // Encrypt the ID value and store in EncryptedId property
+                     e.EncryptedId = protector.Protect(e.Id.ToString());
+                     return e;
+                 }); 
             return View(model);
         }
 
 
-        public ViewResult Details(int? id) // This is an Action method. and it handles what happens with the incoming https request
+      //  public ViewResult Details(int? id) // This is an Action method. and it handles what happens with the incoming https request
+      [AllowAnonymous]
+        public ViewResult Details(string id) // String ID   // 120 encryption and decryption
         {
             //  throw new Exception("Creating an Exception");
-            logger.LogTrace("LEVEL 0");
-            logger.LogInformation("LEVEL INFO");
-            logger.LogCritical("LEVEL CRIT");
-            logger.LogDebug("LEVLE DEBUG");
 
 
-            var emp = _employeeRepository.GetEmployee(id.Value);
+            // Decrypt the employee id using Unprotected method
+            string decryptedId = protector.Unprotect(id);
+            int decryptedIntId = Convert.ToInt32(decryptedId);
+
+
+            var emp = _employeeRepository.GetEmployee(decryptedIntId);
             if(emp == null)
             {
                 Response.StatusCode = 404;
-                return View("EmployeeNotFound", id.Value);
+                return View("EmployeeNotFound", decryptedIntId);
             }
 
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
@@ -63,6 +84,8 @@ namespace Portfolio_Website_Core.Controllers
             //ViewBag.PageTitle = "Employee Details";
             //return View(LOL);
         }
+
+
         [HttpGet]
         [Authorize]
         public ViewResult Create()
