@@ -1,8 +1,10 @@
 ﻿.btn {
     width: 75px;
+    padding: 8px;
 }
 
 .imageThumbnail {
     height: 300px;
     width: auto;
 }
+
