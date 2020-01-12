@@ -48,7 +48,14 @@ namespace Portfolio_Website_Core
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = true;
 
-            }).AddEntityFrameworkStores<AppDdContext>();
+                options.SignIn.RequireConfirmedEmail = true;
+
+            })
+                .AddEntityFrameworkStores<AppDdContext>()
+                // 113 Email confirm
+                .AddDefaultTokenProviders();
+
+
             // 68 -- we can make it its own thing if you want to change the options of diffrent things but since we we only are op Password setting we can do it above 
             //services.Configure<IdentityOptions>(options =>
             //{
