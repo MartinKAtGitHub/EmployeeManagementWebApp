@@ -50,6 +50,9 @@ namespace Portfolio_Website_Core
 
                 options.SignIn.RequireConfirmedEmail = true;
 
+                options.Lockout.MaxFailedAccessAttempts = 2;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3); // default is 5 min
+
             })
                 .AddEntityFrameworkStores<AppDdContext>()
                 // 113 Email confirm
@@ -123,6 +126,8 @@ namespace Portfolio_Website_Core
             services.AddSingleton<IAuthorizationHandler, CanEditOnluOtherAdminRolesAndClaimsHandler>();
             services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
             services.AddSingleton<DataProtectionPurposeStrings>();
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

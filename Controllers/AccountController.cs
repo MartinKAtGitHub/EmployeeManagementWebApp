@@ -139,6 +139,11 @@ namespace Portfolio_Website_Core.Controllers
                     var result = await userManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if (result.Succeeded)
                     {
+                        //123 if you reset the password we want to reset the lockout in case you have been locked out
+                        if(await userManager.IsLockedOutAsync(user))
+                        {
+                            await userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                        }
                         return View("ResetPasswordConfirmation");
                     }
                     // Display validation errors. For example, password reset token already
@@ -291,8 +296,12 @@ namespace Portfolio_Website_Core.Controllers
                     return View(model);
                 }
 
+                //var result = await signInManager.PasswordSignInAsync(model.Email,
+                //                        model.Password, model.RememberMe, false);
+
+                // 123 account lockout on fail set to true
                 var result = await signInManager.PasswordSignInAsync(model.Email,
-                                        model.Password, model.RememberMe, false);
+                                     model.Password, model.RememberMe, true);
 
                 if (result.Succeeded)
                 {
@@ -304,6 +313,15 @@ namespace Portfolio_Website_Core.Controllers
                     {
                         return RedirectToAction("index", "home");
                     }
+                }
+                
+                //123
+                if(result.IsLockedOut)
+                {
+                    ViewBag.LockOutTime = user.LockoutEnd.Value.LocalDateTime.ToString("HH:mm:ss");
+                    //ViewBag.LockOutTime = (user.LockoutEnd - DateTime.Now).Value.Duration(); // gives me 2 min cuz it ticks down from 3
+                    // var LockoutEnd = user.LockoutEnd.Value.Subtract(user.LockoutEnd.Value);
+                    return View("AccountLocked");
                 }
 
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
