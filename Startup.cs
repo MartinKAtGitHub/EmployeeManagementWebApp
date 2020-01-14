@@ -34,7 +34,9 @@ namespace Portfolio_Website_Core
             services.AddDbContextPool<AppDdContext>(
                 options =>
                 {
+                    //options.UseSqlServer(_config.GetSection("ConnectionStrings")["EmployeeDbConnection"]); // Long version of below
                     options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection"));
+
                 });
 
             //65

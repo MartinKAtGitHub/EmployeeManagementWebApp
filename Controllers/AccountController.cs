@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Portfolio_Website_Core.ViewModels;
 using Portfolio_Website_Core.Models;
 using Microsoft.Extensions.Logging;
+using MailKit.Net.Smtp;
+using Microsoft.Extensions.Configuration;
+using MimeKit;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,13 +21,17 @@ namespace Portfolio_Website_Core.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
+        private readonly IConfiguration configuration;
 
         public AccountController(UserManager<ApplicationUser> userManager,
-                                SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger)
+                                SignInManager<ApplicationUser> signInManager,
+                                ILogger<AccountController> logger,
+                                IConfiguration configuration )
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
+            this.configuration = configuration;
         }
 
 
@@ -96,7 +103,7 @@ namespace Portfolio_Website_Core.Controllers
                             new { email = model.Email, token = token }, Request.Scheme);
 
                     // Log the password reset link
-                    logger.Log(LogLevel.Warning, passwordResetLink);
+                    logger.Log(LogLevel.Warning, passwordResetLink);                                // <<<<<<<<<<<<<<<<<<<<<< change it to email
 
                     // Send the user to Forgot Password Confirmation view
                     return View("ForgotPasswordConfirmation");
@@ -109,7 +116,6 @@ namespace Portfolio_Website_Core.Controllers
 
             return View(model);
         }
-
 
         [HttpGet]
         [AllowAnonymous]
@@ -164,7 +170,6 @@ namespace Portfolio_Website_Core.Controllers
         }
 
 
-
         [HttpPost] // to avoid malicious attempts use Post
         public async Task<IActionResult> Logout()
         {
@@ -187,8 +192,6 @@ namespace Portfolio_Website_Core.Controllers
                 return Json($"Email {email} is already in use"); // Jquery validation uses Json for ajax stuff.
             }
         }
-
-
 
         [HttpGet]
         [AllowAnonymous]
@@ -218,7 +221,36 @@ namespace Portfolio_Website_Core.Controllers
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                     // Generates the confirm link the user clicks
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
-                    logger.Log(LogLevel.Warning, confirmationLink);
+                   
+                    logger.Log(LogLevel.Warning, confirmationLink);                                                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Change with Email
+
+                    // MAIL KIT ________________________________________________ Start
+
+                    MimeMessage msg = new MimeMessage();
+
+                    msg.From.Add(new MailboxAddress("Employee Website", "martinwebsitemail@gmail.com"));
+                    msg.To.Add(new MailboxAddress(user.UserName, user.Email));
+                    msg.Subject = "Email confirmation";
+                    msg.Body = new TextPart("plain")
+                    {
+                        Text = confirmationLink
+                    };
+
+                    using (var client = new SmtpClient())
+                    {
+                        // Note: since GMail requires SSL at connection time, use the "smtps"
+                        // protocol instead of "smtp".
+                        var uri = new Uri("smtps://smtp.gmail.com:465");
+
+                        client.Connect(uri);
+
+                        client.Authenticate(configuration.GetSection("Email")["EmailAccount"], configuration.GetSection("Email")["EmailPw"]);
+
+                        client.Send(msg);
+
+                        client.Disconnect(true);
+                    }
+                    // MAIL KIT ________________________________________________ End
 
                     if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
@@ -269,8 +301,6 @@ namespace Portfolio_Website_Core.Controllers
             ViewBag.ErrorTitle = "Email cannot be confirmed";
             return View("Error");
         }
-
-
 
         [HttpGet]
         [AllowAnonymous]
