@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using Portfolio_Website_Core.Utilities.MailService;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,16 +23,19 @@ namespace Portfolio_Website_Core.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
         private readonly IConfiguration configuration;
+        private readonly IMessageService messageService;
 
         public AccountController(UserManager<ApplicationUser> userManager,
                                 SignInManager<ApplicationUser> signInManager,
                                 ILogger<AccountController> logger,
-                                IConfiguration configuration )
+                                IConfiguration configuration,
+                                IMessageService messageService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
             this.configuration = configuration;
+            this.messageService = messageService;
         }
 
 
@@ -102,9 +106,9 @@ namespace Portfolio_Website_Core.Controllers
                     var passwordResetLink = Url.Action("ResetPassword", "Account",
                             new { email = model.Email, token = token }, Request.Scheme);
 
-                    // Log the password reset link
-                    logger.Log(LogLevel.Warning, passwordResetLink);                                // <<<<<<<<<<<<<<<<<<<<<< change it to email
-
+                 
+                    await messageService.SendEmailAsync(user.UserName, user.Email, "Password Reset", passwordResetLink);
+                    
                     // Send the user to Forgot Password Confirmation view
                     return View("ForgotPasswordConfirmation");
                 }
@@ -221,35 +225,38 @@ namespace Portfolio_Website_Core.Controllers
                     var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
                     // Generates the confirm link the user clicks
                     var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
-                   
-                    logger.Log(LogLevel.Warning, confirmationLink);                                                 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Change with Email
+
 
                     // MAIL KIT ________________________________________________ Start
 
-                    MimeMessage msg = new MimeMessage();
+                    // logger.Log(LogLevel.Warning, confirmationLink);
 
-                    msg.From.Add(new MailboxAddress("Employee Website", "martinwebsitemail@gmail.com"));
-                    msg.To.Add(new MailboxAddress(user.UserName, user.Email));
-                    msg.Subject = "Email confirmation";
-                    msg.Body = new TextPart("plain")
-                    {
-                        Text = confirmationLink
-                    };
+                    await messageService.SendEmailAsync(user.UserName, user.Email, "Email confirmation", confirmationLink);
 
-                    using (var client = new SmtpClient())
-                    {
-                        // Note: since GMail requires SSL at connection time, use the "smtps"
-                        // protocol instead of "smtp".
-                        var uri = new Uri("smtps://smtp.gmail.com:465");
+                    //MimeMessage msg = new MimeMessage();
 
-                        client.Connect(uri);
+                    //msg.From.Add(new MailboxAddress("Employee Website", "martinwebsitemail@gmail.com"));
+                    //msg.To.Add(new MailboxAddress(user.UserName, user.Email));
+                    //msg.Subject = "Email confirmation";
+                    //msg.Body = new TextPart("plain")
+                    //{
+                    //    Text = confirmationLink
+                    //};
 
-                        client.Authenticate(configuration.GetSection("Email")["EmailAccount"], configuration.GetSection("Email")["EmailPw"]);
+                    //using (var client = new SmtpClient())
+                    //{
+                    //    // Note: since GMail requires SSL at connection time, use the "smtps"
+                    //    // protocol instead of "smtp".
+                    //    var uri = new Uri("smtps://smtp.gmail.com:465");
 
-                        client.Send(msg);
+                    //    client.Connect(uri);
 
-                        client.Disconnect(true);
-                    }
+                    //    client.Authenticate(configuration.GetSection("Email")["EmailAccount"], configuration.GetSection("Email")["EmailPw"]);
+
+                    //    client.Send(msg);
+
+                    //    client.Disconnect(true);
+                    //}
                     // MAIL KIT ________________________________________________ End
 
                     if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))

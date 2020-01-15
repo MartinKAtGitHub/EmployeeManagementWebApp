@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Portfolio_Website_Core.Models;
 using Portfolio_Website_Core.Security;
+using Portfolio_Website_Core.Utilities.MailService;
 
 namespace Portfolio_Website_Core
 {
@@ -128,6 +129,7 @@ namespace Portfolio_Website_Core
             services.AddSingleton<IAuthorizationHandler, CanEditOnluOtherAdminRolesAndClaimsHandler>();
             services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
             services.AddSingleton<DataProtectionPurposeStrings>();
+            services.AddTransient<IMessageService, MessageService>();
 
            
         }
