@@ -20,7 +20,7 @@ namespace Portfolio_Website_Core.Controllers
         private readonly IEmployeeRepository _employeeRepository; // Read only. because we don't want to change the data in here
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly ILogger logger;
-        
+
         private readonly IDataProtector protector;
 
         public HomeController(IEmployeeRepository employeeRepository,
@@ -37,6 +37,13 @@ namespace Portfolio_Website_Core.Controllers
             protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.EmployeeIdRouteValue);
         }
 
+
+        [HttpGet]
+        public IActionResult PostComment()
+        {
+            return View();
+        }
+
         // Action methods need to have view(razor page) with a similar page. 
         [AllowAnonymous]
         public ViewResult Index() // This is an Action method. and it handles what happens with the incoming https request
@@ -48,13 +55,12 @@ namespace Portfolio_Website_Core.Controllers
                      // Encrypt the ID value and store in EncryptedId property
                      e.EncryptedId = protector.Protect(e.Id.ToString());
                      return e;
-                 }); 
+                 });
             return View(model);
         }
 
-
-      //  public ViewResult Details(int? id) // This is an Action method. and it handles what happens with the incoming https request
-      [AllowAnonymous]
+        //public ViewResult Details(int? id) // This is an Action method. and it handles what happens with the incoming https request
+        [AllowAnonymous]
         public ViewResult Details(string id) // String ID   // 120 encryption and decryption
         {
             //  throw new Exception("Creating an Exception");
@@ -66,7 +72,7 @@ namespace Portfolio_Website_Core.Controllers
 
 
             var emp = _employeeRepository.GetEmployee(decryptedIntId);
-            if(emp == null)
+            if (emp == null)
             {
                 Response.StatusCode = 404;
                 return View("EmployeeNotFound", decryptedIntId);
@@ -75,7 +81,8 @@ namespace Portfolio_Website_Core.Controllers
             HomeDetailsViewModel homeDetailsViewModel = new HomeDetailsViewModel()
             {
                 Employee = emp,
-                PageTitle = "Employee Details"
+                PageTitle = "Employee Details",
+                //Comments
             };
 
             return View(homeDetailsViewModel);
@@ -84,7 +91,6 @@ namespace Portfolio_Website_Core.Controllers
             //ViewBag.PageTitle = "Employee Details";
             //return View(LOL);
         }
-
 
         [HttpGet]
         [Authorize]
@@ -122,14 +128,14 @@ namespace Portfolio_Website_Core.Controllers
                 employee.Email = model.Email;
                 employee.Department = model.Department;
 
-                if(model.Photo != null)
+                if (model.Photo != null)
                 {
-                    if(model.ExistingPhotoPath != null)
+                    if (model.ExistingPhotoPath != null)
                     {
                         string filePath = Path.Combine(hostingEnvironment.WebRootPath, "images", model.ExistingPhotoPath);
                         System.IO.File.Delete(filePath);
                     }
-                        employee.PhotoPath = ProccessUploadedFile(model);
+                    employee.PhotoPath = ProccessUploadedFile(model);
                 }
 
                 _employeeRepository.Update(employee);
@@ -149,7 +155,7 @@ namespace Portfolio_Website_Core.Controllers
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Photo.FileName;
 
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-               
+
                 using (var fileStream = new FileStream(filePath, FileMode.Create)) // this line makes sure the Filestream is done doing what it needs to do before copying
                 {
                     model.Photo.CopyTo(fileStream);
@@ -191,7 +197,7 @@ namespace Portfolio_Website_Core.Controllers
                 };
 
                 _employeeRepository.AddEmployee(newEmployee);
-                return RedirectToAction("details", new { id = newEmployee.Id});
+                return RedirectToAction("details", new { id = newEmployee.Id });
             }
 
             return View();

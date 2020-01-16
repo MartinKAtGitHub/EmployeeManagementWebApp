@@ -1,10 +1,14 @@
 ﻿.btn {
-    width: 75px;
-    padding: 8px;
+    width: 100px;
+    padding: 10px;
 }
 
 .imageThumbnail {
     height: 300px;
     width: auto;
+}
+
+#EmployeeDeleteBtn {
+    margin-left: 50px;
 }
 

@@ -7,11 +7,12 @@ namespace Portfolio_Website_Core.Models
 {
    public interface IEmployeeRepository
     {
-        Employee GetEmployee(int id);
+        //CRUD
+        Employee AddEmployee(Employee employee); // Create
+        Employee GetEmployee(int id); // Read
         IEnumerable<Employee> GetAllEmployees();
         List<Employee> GetAllEmployeesList();
-        Employee AddEmployee(Employee employee);
-        Employee Update(Employee employeeChanges);
-        Employee Delete(int id);
+        Employee Update(Employee employeeChanges); // Update
+        Employee Delete(int id); // Delete
     }
 }
