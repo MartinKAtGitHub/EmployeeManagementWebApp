@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Portfolio_Website_Core.Models;
 
 namespace Portfolio_Website_Core.Migrations
 {
     [DbContext(typeof(AppDdContext))]
-    partial class AppDdContexModelSnapshot : ModelSnapshot
+    [Migration("20200117162324_AddedCommentsModel")]
+    partial class AddedCommentsModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,10 +228,10 @@ namespace Portfolio_Website_Core.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("userId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ViewId")
+                    b.Property<string>("viewId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

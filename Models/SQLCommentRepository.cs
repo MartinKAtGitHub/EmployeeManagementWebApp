@@ -7,16 +7,18 @@ namespace Portfolio_Website_Core.Models
 {
     public class SQLCommentRepository : ICommentRepository
     {
-        //private readonly AppDdContext appDdContext;
+        private readonly AppDdContext appDdContext;
 
-        //public SQLCommentRepository(AppDdContext appDdContext)
-        //{
-        //    this.appDdContext = appDdContext;
-        //}
+        public SQLCommentRepository(AppDdContext appDdContext)
+        {
+            this.appDdContext = appDdContext;
+        }
 
         public Comment CreateComment(Comment comment)
         {
-            throw new NotImplementedException();
+            appDdContext.Comments.Add(comment);
+            appDdContext.SaveChanges();
+            return comment;
         }
 
         public Comment DeleteComment(string Id)

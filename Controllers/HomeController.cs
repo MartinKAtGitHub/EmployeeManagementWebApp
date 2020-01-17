@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Portfolio_Website_Core.Models;
@@ -18,18 +19,28 @@ namespace Portfolio_Website_Core.Controllers
     public class HomeController : Controller
     {
         private readonly IEmployeeRepository _employeeRepository; // Read only. because we don't want to change the data in here
+        private readonly ICommentRepository commentRepository;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly ILogger logger;
 
         private readonly IDataProtector protector;
 
-        public HomeController(IEmployeeRepository employeeRepository,
+        public HomeController(
+            IEmployeeRepository employeeRepository,
+            ICommentRepository commentRepository,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             IWebHostEnvironment hostingEnvironment,
             ILogger<HomeController> logger,
             IDataProtectionProvider dataProtectionProvider,
             DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             _employeeRepository = employeeRepository;
+            this.commentRepository = commentRepository;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
             this.hostingEnvironment = hostingEnvironment;
             this.logger = logger;
 
@@ -39,10 +50,29 @@ namespace Portfolio_Website_Core.Controllers
 
 
         [HttpGet]
-        public IActionResult PostComment()
+        public IActionResult PostComment(string id)
         {
-            return View();
+            return View(/*id*/);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> PostComment(Comment comment, string id)
+        {
+            var currentUser =  await userManager.GetUserAsync(User);
+
+            var newComment = new Comment
+            {
+                Id = Guid.NewGuid().ToString(),
+                Text = comment.Text,
+                UserId = currentUser.Id,
+                ViewId = id
+            };
+
+            commentRepository.CreateComment(newComment);
+            return RedirectToAction("details", new { id = protector.Protect(newComment.ViewId) });
+        }
+
+
 
         // Action methods need to have view(razor page) with a similar page. 
         [AllowAnonymous]
@@ -64,7 +94,7 @@ namespace Portfolio_Website_Core.Controllers
         public ViewResult Details(string id) // String ID   // 120 encryption and decryption
         {
             //  throw new Exception("Creating an Exception");
-
+            var Testid = id;
 
             // Decrypt the employee id using Unprotected method
             string decryptedId = protector.Unprotect(id);

@@ -13,7 +13,7 @@ namespace Portfolio_Website_Core.Models
         // Need to make a set for every Type(Model) you want inn the DB
         // The Db sets will allow you to query and save to the Type you specified
         public DbSet<Employee> Employees { get; set; }
-
+        public DbSet<Comment> Comments { get; set; }
 
         public AppDdContext(DbContextOptions<AppDdContext> options) : base(options)
         {

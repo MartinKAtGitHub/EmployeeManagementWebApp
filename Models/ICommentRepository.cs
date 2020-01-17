@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Portfolio_Website_Core.Models
 {
-    interface ICommentRepository
+    public interface ICommentRepository
     {
         Comment ReadComment(string Id); // user ID insted
         Comment CreateComment(Comment comment);

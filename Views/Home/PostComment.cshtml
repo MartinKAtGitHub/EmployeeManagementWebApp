@@ -1,12 +1,22 @@
 ﻿
+@model Comment
 
-<div class="row justify-content-center m-3">
-    <form action="/html/tags/html_form_tag_action.cfm" method="post">
-        <div>
-            <textarea name="comments" id="comments" style="font-family:sans-serif;font-size:1.2em;">
-                Hey... say something!
+
+    <div class="row justify-content-center m-3">
+        <form asp-controller="Home" asp-action="PostComment" method="post">
+            <div>
+                <h4>New comment</h4>
+            </div>
+            <div>
+
+                <textarea asp-for="@Model.Text" placeholder="Comment..." rows="10" cols="80">
+                
              </textarea>
-        </div>
-        <input type="submit" value="Submit">
-    </form>
-</div>
+            </div>
+            <div class="col-5">
+                <button class="btn btn-primary" type="submit"> Create </button>
+                <a class="btn btn-danger"> Cancel </a>
+            </div>
+        
+        </form>
+    </div>
