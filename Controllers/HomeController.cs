@@ -69,6 +69,7 @@ namespace Portfolio_Website_Core.Controllers
             };
 
             commentRepository.CreateComment(newComment);
+
             return RedirectToAction("details", new { id = protector.Protect(newComment.ViewId) });
         }
 
@@ -78,7 +79,7 @@ namespace Portfolio_Website_Core.Controllers
         [AllowAnonymous]
         public ViewResult Index() // This is an Action method. and it handles what happens with the incoming https request
         {
-            var model = _employeeRepository.GetAllEmployeesList()
+            var model = _employeeRepository.GetAllEmployees()
 
                  .Select(e =>
                  {
@@ -112,7 +113,7 @@ namespace Portfolio_Website_Core.Controllers
             {
                 Employee = emp,
                 PageTitle = "Employee Details",
-                //Comments
+                comments = commentRepository.GetAllCommentsOnEmployeeId(emp.Id.ToString())
             };
 
             return View(homeDetailsViewModel);

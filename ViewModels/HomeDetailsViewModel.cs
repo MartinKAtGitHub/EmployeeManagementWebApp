@@ -14,5 +14,7 @@ namespace Portfolio_Website_Core.ViewModels
     {
         public Employee Employee{ get; set; }
         public string PageTitle { get; set; }
+
+        public IEnumerable<Comment> comments { get; set; }
     }
 }

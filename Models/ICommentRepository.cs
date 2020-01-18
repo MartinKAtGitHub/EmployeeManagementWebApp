@@ -11,5 +11,7 @@ namespace Portfolio_Website_Core.Models
         Comment CreateComment(Comment comment);
         Comment UpdateComment(Comment UpdatedComment);
         Comment DeleteComment(string Id);
+
+        IEnumerable<Comment> GetAllCommentsOnEmployeeId(string id);
     }
 }

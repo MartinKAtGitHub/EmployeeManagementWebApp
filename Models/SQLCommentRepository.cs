@@ -26,6 +26,11 @@ namespace Portfolio_Website_Core.Models
             throw new NotImplementedException();
         }
 
+        public IEnumerable<Comment> GetAllCommentsOnEmployeeId(string id)
+        {
+            return appDdContext.Comments.Where(c => c.ViewId == id).ToList();
+        }
+
         public Comment ReadComment(string Id)
         {
             throw new NotImplementedException();
