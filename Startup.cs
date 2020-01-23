@@ -36,7 +36,10 @@ namespace Portfolio_Website_Core
                 options =>
                 {
                     //options.UseSqlServer(_config.GetSection("ConnectionStrings")["EmployeeDbConnection"]); // Long version of below
-                    options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection"));
+
+                    //options.UseSqlServer(_config.GetConnectionString("EmployeeDbConnection")); // Gets it from user seacrets
+
+                    options.UseSqlServer(Environment.GetEnvironmentVariable("EmployeeDbConnectionString", EnvironmentVariableTarget.Machine)); // this is for environment variables  (works only on a Microsoft machine)
 
                 });
 
@@ -64,7 +67,7 @@ namespace Portfolio_Website_Core
             // 118 Set token lifespan (default is 1 day)
             services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromHours(2)); // This sets the time for all token types (Email & PW reset)
 
-            // 68 -- we can make it its own thing if you want to change the options of diffrent things but since we we only are op Password setting we can do it above 
+            // 68 -- we can make it its own thing if you want to change the options of different things but since we only are op Password setting we can do it above 
             //services.Configure<IdentityOptions>(options =>
             //{
             //    options.Password.RequiredLength = 5;
@@ -153,7 +156,7 @@ namespace Portfolio_Website_Core
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
 
-
+            
             //app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseAuthentication();

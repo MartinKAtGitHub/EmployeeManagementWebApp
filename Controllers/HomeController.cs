@@ -95,7 +95,8 @@ namespace Portfolio_Website_Core.Controllers
         public ViewResult Details(string id) // String ID   // 120 encryption and decryption
         {
             //  throw new Exception("Creating an Exception");
-            var Testid = id;
+           
+            // If ouer ID = NULL we just throw a 404 and as the user to go back or somthing
 
             // Decrypt the employee id using Unprotected method
             string decryptedId = protector.Unprotect(id);

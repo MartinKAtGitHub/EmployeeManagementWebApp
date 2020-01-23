@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Portfolio_Website_Core</RootNamespace>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel> <!-- Default behavior, unnecessary -->
     <UserSecretsId>ac64ed3e-56b0-4658-8ad6-2b6dd0503ffa</UserSecretsId> <!--added manual-->
   </PropertyGroup>
 
