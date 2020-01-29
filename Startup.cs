@@ -32,6 +32,12 @@ namespace Portfolio_Website_Core
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.Configure<IISServerOptions>(op =>
+            {
+                op.AutomaticAuthentication = false;
+            });
+
             services.AddDbContextPool<AppDdContext>(
                 options =>
                 {
@@ -132,6 +138,7 @@ namespace Portfolio_Website_Core
 
             services.AddSingleton<IAuthorizationHandler, CanEditOnluOtherAdminRolesAndClaimsHandler>();
             services.AddSingleton<IAuthorizationHandler, SuperAdminHandler>();
+
             services.AddSingleton<DataProtectionPurposeStrings>();
             services.AddTransient<IMessageService, MessageService>();
 

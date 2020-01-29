@@ -531,8 +531,5 @@ namespace Portfolio_Website_Core.Controllers
 
         }
 
-
-
-
     }
 }

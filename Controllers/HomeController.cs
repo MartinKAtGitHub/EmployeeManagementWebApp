@@ -130,12 +130,32 @@ namespace Portfolio_Website_Core.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Create(EmployeeCreateViewModel model)
+        {
+            if (ModelState.IsValid) // Checks if all the required fields are valid
+            {
+                string uniqueFileName = ProccessUploadedFile(model);
+                Employee newEmployee = new Employee
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Department = model.Department,
+                    PhotoPath = uniqueFileName
+                };
 
+                _employeeRepository.AddEmployee(newEmployee);
+                return RedirectToAction("details", new { id = protector.Protect( newEmployee.Id.ToString() )});
+            }
+
+            return View();
+        }
         [HttpGet]
         [Authorize]
-        public ViewResult Edit(int Id)
+        public ViewResult Edit(string id)
         {
-            var emp = _employeeRepository.GetEmployee(Id);
+            string decryptedId = protector.Unprotect(id);
+            var emp = _employeeRepository.GetEmployee(Convert.ToInt32(decryptedId));
             EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel
             {
                 Id = emp.Id,
@@ -214,26 +234,7 @@ namespace Portfolio_Website_Core.Controllers
         //    return View();
         //}
 
-        [HttpPost]
-        public IActionResult Create(EmployeeCreateViewModel model)
-        {
-            if (ModelState.IsValid) // Checks if all the required fields are valid
-            {
-                string uniqueFileName = ProccessUploadedFile(model);
-                Employee newEmployee = new Employee
-                {
-                    Name = model.Name,
-                    Email = model.Email,
-                    Department = model.Department,
-                    PhotoPath = uniqueFileName
-                };
-
-                _employeeRepository.AddEmployee(newEmployee);
-                return RedirectToAction("details", new { id = newEmployee.Id });
-            }
-
-            return View();
-        }
+        
 
         [HttpGet]
         public IActionResult Delete(int id)

@@ -62,7 +62,7 @@ namespace Portfolio_Website_Core.Controllers
 
                 // The new password did not meet the complexity rules or
                 // the current password is incorrect. Add these errors to
-                // the ModelState and rerender ChangePassword view
+                // the ModelState and re render ChangePassword view
                 if (!result.Succeeded)
                 {
                     foreach (var error in result.Errors)
