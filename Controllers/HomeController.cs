@@ -237,9 +237,10 @@ namespace Portfolio_Website_Core.Controllers
         
 
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string id)
         {
-            _employeeRepository.Delete(id);
+            var decryptedId =  protector.Unprotect(id);
+            _employeeRepository.Delete(Convert.ToInt32(decryptedId));
             return RedirectToAction("index");
         }
     }
